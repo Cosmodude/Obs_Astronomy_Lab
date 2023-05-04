@@ -2,3 +2,5 @@ pyvenv.cfg
 Scripts/
 Lib/
 Include/
+Files/calibration*
+Files/Flat*
