@@ -1,14 +1,16 @@
-# pip install -r requirements.txt crashes
+#still pip install -r requirements.txt crashes
 numpy==1.24.3
 scipy==1.10.1
 astropy==5.2.2
 pandas==1
 jupyter==1
 sep==1.2.1
-ccdproc==2  # here is the problem
+ccdproc==2  # here is the problem, solved, installed
 photutils==1.7 
 specutils==1.10 
 astro-ndslice==0.2
-ysfitsutilpy==0.2  # problem here :error: Microsoft Visual C++ 14.0 or greater is required. Get it with "Microsoft C++ Build Tools": https://visualstudio.microsoft.com/visual-cpp-build-tools/
+ysfitsutilpy==0.2   installed # problem here :error: Microsoft Visual C++ 14.0 or greater is required. Get it with "Microsoft C++ Build Tools": https://visualstudio.microsoft.com/visual-cpp-build-tools/
 ysphotutilpy==0.1.1
-# astroscrappy==1.1
+astroscrappy==1.1 # here is the core
+matplotlib
+
