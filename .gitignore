@@ -2,8 +2,9 @@ pyvenv.cfg
 Scripts/
 Lib/
 Include/
-Files/calibration*
-Files/Flat*
+Data/calibration*
+Data/Flat*
 etc/
 /share
 __pycache__
+/Data
