@@ -38,6 +38,7 @@ TMPDIR.mkdir(exist_ok=True)
 allfits = list(DATAPATH.glob("*p4179*.fits"))
 allfits.sort()
 
+# Only for one file, wrap into loop
 ccd = CCDData.read(allfits[0])
 cut = Cutout2D(ccd, position=(270,320), size=(95,100))
 

@@ -27,12 +27,14 @@ warnings.filterwarnings('ignore', category=UserWarning, append=True)
 
 import _tool_visualization as vis
 
-DATAPATH = Path('./Files/')
+### Change here!!!
+DATAPATH = Path('./Data/')
 TMPDIR = Path('tmp')
 TMPDIR.mkdir(exist_ok=True)
 
 # In 3
-allfits = list(DATAPATH.glob("*.fit"))
+### Change here !!!
+allfits = list(DATAPATH.glob("M13*.fit")) 
 allfits.sort()
 print(f"Found {len(allfits)} fits files in {DATAPATH}.")
 for _f in allfits:
@@ -68,6 +70,7 @@ hdul.close()
 """
 
 # In 8
+# Only one file, wrap into loop
 hdul = fits.open(allfits[0])
 
 # In 9
