@@ -7,4 +7,5 @@ Data/Flat*
 etc/
 /share
 __pycache__
-/Data
+Data/
+Problem*/
