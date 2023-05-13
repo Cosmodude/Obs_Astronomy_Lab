@@ -1,5 +1,5 @@
 ### https://github.com/Cosmodude/Obs_Astronomy_Lab/blob/main/TA_task.md
-# 1
+# Set 1
 
 ### 1 
 https://docs.astropy.org/en/stable/io/fits/index.html
@@ -11,7 +11,7 @@ WCS - World Coordinate System;
 
 I did
 
-# 2 
+# Set 2 
 Rules: 
     Never use for or while loop.
 
