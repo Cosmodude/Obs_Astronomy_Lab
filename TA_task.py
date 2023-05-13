@@ -1,3 +1,4 @@
+# https://github.com/Cosmodude/Obs_Astronomy_Lab/blob/main/TA_task.py
 import numpy as np
 from pathlib import Path
 from astropy.io import fits
@@ -47,4 +48,8 @@ print("Prob 10:")
 print(hdr_ccd) # prints badly in terminal
 """
 ### Prob 11
-np.testing.assert_allclose(hdr_ccd, hdr_hdu)
+print()
+print("Prob 11:")
+print(hdr_ccd)
+print(hdr_hdu)
+# Prints same structure
