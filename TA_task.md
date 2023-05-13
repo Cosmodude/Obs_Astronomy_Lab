@@ -21,8 +21,10 @@ Rules:
 
     For each problem, I gave hints. It is also homework for you to search for those on google.
 
-"""
+```
 # https://github.com/Cosmodude/Obs_Astronomy_Lab/blob/main/TA_task.py
+# Used https://docs.astropy.org/en/stable/io/fits/index.html
+# Solved this: 
 import numpy as np
 from pathlib import Path
 from astropy.io import fits
@@ -33,8 +35,7 @@ SAVEPATH = Path("./Problem_products")  # <-- You may tune here for your computer
 data = np.random.rand(100, 100) * 100 # Creates 100x100 array of random numbers
 #print(data)
 
-# Used https://docs.astropy.org/en/stable/io/fits/index.html
-# Solved this
+
 
 ### Prob 1
 hdu = fits.PrimaryHDU(data=data)
@@ -78,6 +79,4 @@ print(hdr_ccd)
 print(hdr_hdu)
 # Prints same structure
 
-
-
-"""
+```
