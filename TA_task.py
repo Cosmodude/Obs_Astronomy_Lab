@@ -1,6 +1,8 @@
 # https://github.com/Cosmodude/Obs_Astronomy_Lab/blob/main/TA_task.py
 # Used https://docs.astropy.org/en/stable/io/fits/index.html
-# Solved this
+
+### Task 1
+
 import numpy as np
 from pathlib import Path
 from astropy.io import fits
@@ -52,3 +54,31 @@ print("Prob 11:")
 print(hdr_ccd)
 print(hdr_hdu)
 # Prints same structure
+
+
+
+
+### Task 2 Software & Tools
+
+print()
+print("Task 2")
+import numpy
+import scipy
+import astropy
+import pandas
+import ccdproc
+import photutils 
+import specutils 
+
+import astroscrappy
+import matplotlib
+
+print(ccdproc.__version__)
+print(matplotlib.__version__)
+print(numpy.__version__)
+print(scipy.__version__)
+print(astropy.__version__)
+print(pandas.__version__)
+print(photutils.__version__)
+print(specutils.__version__)
+print(astroscrappy.__version__)
