@@ -161,5 +161,5 @@ Rules:
         I = 5.3 * e3
         m_inst = - 9.4 
     14: 
-        m = m_0 + 2.5log(F_0/F)
+        m = m_0 + 2.5log(I_0/I)
 
