@@ -146,5 +146,20 @@ Rules:
     3: yes
     4: yes
     5: yes
-
+    6:
+        sum = 818688.04; area(arcsec**2) = 7.71593
+    7:  
+        surf_bri = 20277.9; mean = 1955.79; median = 1955.2; stddev = 12.3002;
+    8: yes
+    9: 
+        sky value = 20000, matches with surf_bri
+    10: 
+        I = 66.6 * e4
+        m_inst = - 14.56
     12: oh
+    13: 
+        I = 5.3 * e3
+        m_inst = - 9.4 
+    14: 
+        m = m_0 + 2.5log(F_0/F)
+
