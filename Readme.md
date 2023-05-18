@@ -7,3 +7,6 @@
     Images can be viewed via ds9 app:
         https://sites.google.com/cfa.harvard.edu/saoimageds9/download
 
+## Preprocessing Done 
+    Later only 06-diffphot.ipynb.py file is necessary for analysis,
+    others are optional
