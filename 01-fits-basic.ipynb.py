@@ -28,7 +28,7 @@ warnings.filterwarnings('ignore', category=UserWarning, append=True)
 import _tool_visualization as vis
 
 ### Change here!!!
-DATAPATH = Path('./Data/')
+DATAPATH = Path('./Data/Cal_Data')
 TMPDIR = Path('tmp')
 TMPDIR.mkdir(exist_ok=True)
 
@@ -64,41 +64,41 @@ print(list(hdul[0].header.keys())[:10], end='\n\n')
 
 print("DATE-OBS (UT time of the **start** of the exposure) of hdul[0]: hdul[0].header['DATE-OBS']")
 print(hdul[0].header['DATE-OBS'])
-
+"""
 # Close the HDU
 hdul.close()
-"""
 
 # In 8
 # Only one file, wrap into loop
-hdul = fits.open(allfits[0])
+for fit in allfits:
+    hdul = fits.open(allfits[0])
 
-# In 9
-obst = Time(hdul[0].header["DATE-OBS"])
-expt = hdul[0].header["EXPTIME"] * u.s
-print("The start of the observation time is  :", obst)
-print("The middle of the observation time is :", obst + expt/2)
-print("The end of the observation time is    :", obst + expt)
+    # In 9
+    obst = Time(hdul[0].header["DATE-OBS"])
+    expt = hdul[0].header["EXPTIME"] * u.s
+    print("The start of the observation time is  :", obst)
+    print("The middle of the observation time is :", obst + expt/2)
+    print("The end of the observation time is    :", obst + expt)
 
 
 
-fig, axs = plt.subplots(1, 1, figsize=(4, 3), sharex=False, sharey=False, gridspec_kw=None)
-vis.norm_imshow(axs, hdul[0].data, zscale=True)
-plt.tight_layout()
+    fig, axs = plt.subplots(1, 1, figsize=(4, 3), sharex=False, sharey=False, gridspec_kw=None)
+    vis.norm_imshow(axs, hdul[0].data, zscale=True)
+    plt.tight_layout()
 
-hdul = fits.open(allfits[0])
-data = hdul[0].data
-newdata = np.sqrt(data[300:400, 650:750])
-print(newdata.shape)
+    hdul = fits.open(allfits[0])
+    data = hdul[0].data
+    newdata = np.sqrt(data[300:400, 650:750])
+    print(newdata.shape)
 
-fig, axs = plt.subplots(1, 2, figsize=(5, 3), sharex=False, sharey=False, gridspec_kw=None)
-vis.norm_imshow(axs[0], newdata, zscale=True)
-vis.norm_imshow(axs[1], newdata, zscale=False, stretch='sqrt')
+    fig, axs = plt.subplots(1, 2, figsize=(5, 3), sharex=False, sharey=False, gridspec_kw=None)
+    vis.norm_imshow(axs[0], newdata, zscale=True)
+    vis.norm_imshow(axs[1], newdata, zscale=False, stretch='sqrt')
 
-plt.tight_layout()
+    plt.tight_layout()
 
-newhdu = fits.PrimaryHDU(data=newdata, header=hdul[0].header)
-newhdu.writeto(Path("tmp") / "test.fits", overwrite=True, output_verify='fix')
+    newhdu = fits.PrimaryHDU(data=newdata, header=hdul[0].header)
+    newhdu.writeto(Path("tmp") / "test.fits", overwrite=True, output_verify='fix')
 
 from astropy.nddata import Cutout2D
 from astropy.wcs import WCS
@@ -123,28 +123,30 @@ def cut_ccd(ccd, position, size, mode="trim", fill_value=np.nan, warnings=True):
 
     return nccd
 
+for fit in allfits:
+    ccd = CCDData.read(fit, unit= "adu") # unit header needed for not example files
+    cut = cut_ccd(ccd, position=(700, 350), size=(100, 100))
+    print(cut.shape)
+    cut.data = np.sqrt(cut.data)
 
-ccd = CCDData.read(allfits[0], unit= "adu") # unit header needed for not example files
-cut = cut_ccd(ccd, position=(700, 350), size=(100, 100))
-print(cut.shape)
-cut.data = np.sqrt(cut.data)
+    fig, axs = plt.subplots(1, 2, figsize=(5, 3), sharex=False, sharey=False, gridspec_kw=None)
+    vis.norm_imshow(axs[0], cut.data, zscale=True)
+    vis.norm_imshow(axs[1], cut.data, zscale=False, stretch='sqrt')
+    plt.tight_layout()
 
-fig, axs = plt.subplots(1, 2, figsize=(5, 3), sharex=False, sharey=False, gridspec_kw=None)
-vis.norm_imshow(axs[0], cut.data, zscale=True)
-vis.norm_imshow(axs[1], cut.data, zscale=False, stretch='sqrt')
-plt.tight_layout()
+    cut.write(Path("tmp") / "test.fits", overwrite=True, output_verify='fix')
 
-cut.write(Path("tmp") / "test.fits", overwrite=True, output_verify='fix')
+    ccd = CCDData.read(allfits[0], unit= "adu")
+    cut = yfu.imslice(ccd, trimsec="[650:749, 300:399]")
+    print(cut.shape)
+    cut.data = np.sqrt(cut.data)
 
-ccd = CCDData.read(allfits[0], unit= "adu")
-cut = yfu.imslice(ccd, trimsec="[650:749, 300:399]")
-print(cut.shape)
-cut.data = np.sqrt(cut.data)
+    fig, axs = plt.subplots(1, 2, figsize=(5, 3), sharex=False, sharey=False, gridspec_kw=None)
+    vis.norm_imshow(axs[0], cut.data, zscale=True)
+    vis.norm_imshow(axs[1], cut.data, zscale=False, stretch='sqrt')
+    plt.tight_layout()
 
-fig, axs = plt.subplots(1, 2, figsize=(5, 3), sharex=False, sharey=False, gridspec_kw=None)
-vis.norm_imshow(axs[0], cut.data, zscale=True)
-vis.norm_imshow(axs[1], cut.data, zscale=False, stretch='sqrt')
-plt.tight_layout()
+print ("CCD over")
 
 import astro_ndslice as nds
 arr2d = np.arange(100).reshape(10,10)
