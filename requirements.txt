@@ -13,4 +13,5 @@ ysfitsutilpy==0.2   installed # problem here :error: Microsoft Visual C++ 14.0 o
 ysphotutilpy==0.1.1
 astroscrappy==1.1 # here is the core
 matplotlib
+astroalign
 
