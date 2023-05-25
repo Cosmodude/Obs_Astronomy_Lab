@@ -10,3 +10,7 @@
 ## Preprocessing Done 
     Later only 06-diffphot.ipynb.py file is necessary for analysis,
     others are optional
+
+    Drop first then match
+    get reference stars 
+    then photometry for 
