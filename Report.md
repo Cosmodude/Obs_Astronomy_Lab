@@ -5,6 +5,6 @@ I've callibrated the images:
     - Changed between: B,I,R,V filters manually to callibrate them separately
     - Got a new folder with calibrated images
 
-Created my own scripts (helpful_scripts.py) including useful functions
+Created my own scripts (helpful_scripts.py) including useful functions for alligning images for each filter 
 
 

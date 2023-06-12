@@ -49,7 +49,7 @@ allfits.sort()
 
 # Only one file, wrap into loop
 
-ccd = CCDData.read(allfits[0])
+ccd = CCDData.read(allfits[0], unit= "adu")
 
 # 1.1
 for key in ["DATE-OBS", "EXPTIME", "FILTER"]:
