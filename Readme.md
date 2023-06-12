@@ -11,6 +11,7 @@
     Later only 06-diffphot.ipynb.py file is necessary for analysis,
     others are optional
 
-    Drop first then match
+    Get stars using DAO finder and Query
+    Drop nearby ones first, then match (get reference stars)
     get reference stars 
     then photometry for 

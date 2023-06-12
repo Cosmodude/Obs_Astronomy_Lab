@@ -17,7 +17,7 @@ RAWPATH  = DATAPATH/'Raw_Data'                    # directory for raw data
 CALPATH  = DATAPATH/'Cal_Data'    
 
 # In 4 
-# Change between: B,I,R,V manually in the following line's path
+# Change between: B,I,R,V manually in the following line's path and run script for each filter
 list_obj = list(RAWPATH.glob('M13-*R.fit'))       # gathering raw fits files of targets
 list_obj.sort()                                    # sorting
 list_obj         # directory for saving the calibrated data

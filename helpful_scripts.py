@@ -25,8 +25,9 @@ def astrosync():
         print(i)
         target = ccd_array[0]#.newbyteorder()
         source = ccd_array[1]#.newbyteorder()
-        aligned_images_arr, footprint = aa.register( source, target , propagate_mask=True,detection_sigma=2)
+        # hear is the error
+        aligned_images_arr, footprint = aa.register( source, target , propagate_mask=True,detection_sigma=2) 
     print(aligned_images_arr)
-astrosync()
+
 
 
