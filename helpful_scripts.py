@@ -3,31 +3,42 @@ import astroalign as aa
 from astropy.nddata import CCDData
 from astropy.io import fits
 
-DATAPATH = Path('./Data/Cal_Data')
+DATAPATH = Path('./Data/Raw_Data')
 TMPDIR = Path('tmp')
 TMPDIR.mkdir(exist_ok=True)
 
-allfits = list(DATAPATH.glob("M13*R*.fit"))
+filter= "V"
+allfits = list(DATAPATH.glob(f'M13*{filter}*.fit'))
 allfits.sort()
 data = []
-for fit in allfits:
-    data.append(fits.getdata(fit))
 ccd_array= []
-for fit in allfits:
+header_obj = []
+for idx, fit in enumerate(allfits):
     ccd_array.append(CCDData.read(fit,unit= "adu"))
+    d, h = fits.getdata(fit, header = True)
+    header_obj.append(h)
+    data.append(d)
 #print(ccd_array)
 
 ### Astroalign 
 ### for every filter allign images one by one 
 #### Throws errors : Big-endian buffer for ccd and reference stars less than min for data
-def astrosync():
+def astrosync(array):
+    print(len(array)-1)
     for i in range(0, len(ccd_array)-1):
         print(i)
-        target = ccd_array[0]#.newbyteorder()
-        source = ccd_array[1]#.newbyteorder()
-        # hear is the error
-        aligned_images_arr, footprint = aa.register( source, target , propagate_mask=True,detection_sigma=2) 
-    print(aligned_images_arr)
+        target = array[i]#.newbyteorder()
+        source = array[i+1]#.newbyteorder()
+        # here is the error only with calibrated data
+        aligned_image, footprint = aa.register( source, target , propagate_mask=True,detection_sigma=3) 
+        # set next target to alligned image
+        array[i+1] = aligned_image
+    print(aligned_image)
 
+    # Saving file
+    DATAPATH = Path('./Data')
+    fits.writeto(DATAPATH / (f"M13-{filter}" + '_aligned.fit'), aligned_image, header_obj[0], overwrite = True)
+    return aligned_image
+astrosync(ccd_array)
 
 
