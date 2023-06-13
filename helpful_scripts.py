@@ -36,7 +36,7 @@ def astrosync(array):
     print(aligned_image)
 
     # Saving file
-    DATAPATH = Path('./Data')
+    DATAPATH = Path('./Data/Aligned_Raw/')
     fits.writeto(DATAPATH / (f"M13-{filter}" + '_aligned.fit'), aligned_image, header_obj[0], overwrite = True)
     return aligned_image
 astrosync(ccd_array)

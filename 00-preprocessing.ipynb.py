@@ -13,12 +13,13 @@ from pathlib import Path                          # it is useful for directory-r
 # In 3
 ### Change HERE !!!
 DATAPATH = Path('./Data')                      # path of data directory
-RAWPATH  = DATAPATH/'Raw_Data'                    # directory for raw data
-CALPATH  = DATAPATH/'Cal_Data'    
+RAWPATH  = DATAPATH/'Raw_Data'              # directory for raw data
+CALPATH  = DATAPATH/'Aligned_Cal' 
+ALIGNEDRAWPATH = DATAPATH/'Aligned_Raw'
 
 # In 4 
 # Change between: B,I,R,V manually in the following line's path and run script for each filter
-list_obj = list(RAWPATH.glob('M13-*R.fit'))       # gathering raw fits files of targets
+list_obj = list(ALIGNEDRAWPATH.glob('M13-*V*.fit'))       # gathering raw fits files of targets
 list_obj.sort()                                    # sorting
 list_obj         # directory for saving the calibrated data
 
@@ -165,7 +166,10 @@ for obj in list_obj:
     # image calibration for all images
     data_obj, header_obj = fits.getdata(obj, header = True)
     data_cal_obj = (data_obj - data_mbias - data_mdark) / data_mflat
+    data_cal_obj -= data_cal_obj.min()
+    print(data_cal_obj.min())
     
     CALPATH.mkdir(exist_ok = True)
     print(obj)
     fits.writeto(CALPATH / (str(obj).split('.')[0].split("\\")[-1] + '_cal.fit'), data_cal_obj, header_obj, overwrite = True)
+    print("File saved!")
