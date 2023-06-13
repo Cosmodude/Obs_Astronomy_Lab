@@ -12,6 +12,6 @@
     others are optional
 
     Get stars using DAO finder and Query
-    Drop nearby ones first, then match (get reference stars)
-    get reference stars 
-    then photometry for 
+    Drop nearby ones first, then match 
+    get reference stars from these
+    then photometry for them

@@ -40,10 +40,12 @@ warnings.filterwarnings('ignore', category=UserWarning, append=True)
 
 import _tool_visualization as vis
 
+### Set yours here
 DATAPATH = Path('./Data/Cal_Data')
 TMPDIR = Path('tmp')
 TMPDIR.mkdir(exist_ok=True)
 
+### Change filters here manually
 allfits = list(DATAPATH.glob("M13*V*.fit"))
 allfits.sort()
 
