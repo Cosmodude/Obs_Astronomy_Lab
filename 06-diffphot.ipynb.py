@@ -8,37 +8,38 @@ ipython = get_ipython()
 """
 
 from pathlib import Path
-
 import numpy as np
 
+from astropy.io import fits
+from astropy.time import Time
 from astropy import units as u
 from astropy.nddata import CCDData, Cutout2D
-from astropy.coordinates import SkyCoord
-from astropy.table import Table
-from astropy.time import Time
 from astropy.stats import sigma_clipped_stats
+from astropy.coordinates import SkyCoord
 
+from astroquery.gaia import Gaia
 from astroquery.mast import Catalogs
-from astroquery.jplhorizons import Horizons
-
-import ysfitsutilpy as yfu
-import ysphotutilpy as ypu
-
+from astroquery.jplhorizons import Horizons 
+Gaia.ROW_LIMIT = -1
 from matplotlib import pyplot as plt
 from matplotlib import rcParams
 plt.style.use('default')
 rcParams.update({'font.size':12})
 
-from photutils.aperture import (CircularAperture, CircularAnnulus)
-from photutils.detection import DAOStarFinder
-from photutils.psf.groupstars import DAOGroup
+from photutils.centroids import centroid_com
 
-from scipy.optimize import minimize
+import ysfitsutilpy as yfu
+import ysphotutilpy as ypu
 
 import warnings
 warnings.filterwarnings('ignore', category=UserWarning, append=True)
 
 import _tool_visualization as vis
+from astropy.nddata import Cutout2D
+from astropy.wcs import WCS
+
+from astropy.table import Table
+from photutils.psf.groupstars import DAOGroup
 
 ### Set yours here
 DATAPATH = Path('./Data/Aligned_Cal')
@@ -75,7 +76,8 @@ def cut_ccd(ccd, position, size, mode="trim", fill_value=np.nan, warnings=True):
 
 cutccd = cut_ccd(ccd,position=(2000,2000), size=(2000,2000))
 
-### Query stars using DAO starfinder
+### Query stars using DAO starfinder using circular aperture
+
 from photutils.detection import DAOStarFinder
 from photutils.aperture import CircularAperture
 
@@ -97,6 +99,7 @@ aps.plot(color='blue', lw=1, alpha=0.5)
 plt.tight_layout()
 plt.show();
 
+"""
 # 1.3 
 
 pix_scale = 0.4*u.arcsec
@@ -163,3 +166,4 @@ dao = finder(ccd.data - med)
 print(f"Total {len(dao)} stars from DAOStarFinder with threshold = {finder.threshold:.1f}")
 
 # 1.3.1
+"""

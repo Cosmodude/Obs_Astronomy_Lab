@@ -7,6 +7,8 @@ I've callibrated the images:
     - Changed between: B,I,R,V filters manually and run script for each to callibrate them separately
     - Got a new folder with calibrated images
 
-Created my own scripts (helpful_scripts.py) including useful functions for alligning images for each filter 
+Created my own scripts (helpful_scripts.py) including useful functions for aligning images and stacking them for each filter 
+
+DAO Starfinder gives 1692 stars for 
 
 

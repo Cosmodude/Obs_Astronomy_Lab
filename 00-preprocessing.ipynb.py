@@ -167,9 +167,9 @@ for obj in list_obj:
     data_obj, header_obj = fits.getdata(obj, header = True)
     data_cal_obj = (data_obj - data_mbias - data_mdark) / data_mflat
     data_cal_obj -= data_cal_obj.min()
-    print(data_cal_obj.min())
+    print("File:", obj)
+    print("Min data is", data_cal_obj.min())
     
     CALPATH.mkdir(exist_ok = True)
-    print(obj)
     fits.writeto(CALPATH / (str(obj).split('.')[0].split("\\")[-1] + '_cal.fit'), data_cal_obj, header_obj, overwrite = True)
     print("File saved!")

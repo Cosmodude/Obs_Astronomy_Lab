@@ -7,6 +7,27 @@ DATAPATH = Path('./Data/Raw_Data')
 TMPDIR = Path('tmp')
 TMPDIR.mkdir(exist_ok=True)
 
+### Astroalign 
+### for every filter allign images one by one 
+#### Throws errors : Big-endian buffer for ccd and reference stars less than min for data
+def align_and_stack(array):
+    print(len(array))
+    stacked_image = array[0]
+    for i in range(1, len(array)):
+        print(i)
+        target = array[0]#.newbyteorder()
+        source = array[i]#.newbyteorder()
+        # here comes the error, only with calibrated data
+        aligned_source, footprint = aa.register( source, target , propagate_mask=True,detection_sigma=3) 
+        # stack images
+        stacked_image += aligned_source
+    print(stacked_image)
+
+    # Saving file
+    DATAPATH = Path('./Data/Aligned_Raw/')
+    fits.writeto(DATAPATH / (f"M13-{filter}" + '_aligned.fit'), stacked_image, header_obj[0], overwrite = True)
+    return stacked_image
+
 filter= "V"
 allfits = list(DATAPATH.glob(f'M13*{filter}*.fit'))
 allfits.sort()
@@ -20,25 +41,6 @@ for idx, fit in enumerate(allfits):
     data.append(d)
 #print(ccd_array)
 
-### Astroalign 
-### for every filter allign images one by one 
-#### Throws errors : Big-endian buffer for ccd and reference stars less than min for data
-def astrosync(array):
-    print(len(array)-1)
-    for i in range(0, len(ccd_array)-1):
-        print(i)
-        target = array[i]#.newbyteorder()
-        source = array[i+1]#.newbyteorder()
-        # here is the error only with calibrated data
-        aligned_image, footprint = aa.register( source, target , propagate_mask=True,detection_sigma=3) 
-        # set next target to alligned image
-        array[i+1] = aligned_image
-    print(aligned_image)
-
-    # Saving file
-    DATAPATH = Path('./Data/Aligned_Raw/')
-    fits.writeto(DATAPATH / (f"M13-{filter}" + '_aligned.fit'), aligned_image, header_obj[0], overwrite = True)
-    return aligned_image
-astrosync(ccd_array)
+align_and_stack(ccd_array)
 
 
