@@ -41,7 +41,7 @@ warnings.filterwarnings('ignore', category=UserWarning, append=True)
 import _tool_visualization as vis
 
 ### Set yours here
-DATAPATH = Path('./Data/Cal_Data')
+DATAPATH = Path('./Data/Aligned_Cal')
 TMPDIR = Path('tmp')
 TMPDIR.mkdir(exist_ok=True)
 
@@ -49,43 +49,53 @@ TMPDIR.mkdir(exist_ok=True)
 allfits = list(DATAPATH.glob("M13*V*.fit"))
 allfits.sort()
 
-# Only one file, wrap into loop
+###  Only one file, wrap into loop
 
 ccd = CCDData.read(allfits[0], unit= "adu")
 
-# 1.1
-for key in ["DATE-OBS", "EXPTIME", "FILTER"]:
-    print(f"{key:10s} {str(ccd.header[key]):20s} {ccd.header.comments[key]}")
+###  Cut outer regions of the image, keep only center
+def cut_ccd(ccd, position, size, mode="trim", fill_value=np.nan, warnings=True):
+    """ Converts the Cutout2D object to proper CCDData """
+    cutout = Cutout2D(
+        data=ccd.data, position=position, size=size,
+        wcs=getattr(ccd, "wcs", WCS(ccd.header)),
+        mode=mode, fill_value=fill_value, copy=True,
+    )
+    # Copy True just to avoid any contamination to the original ccd.
 
-# 1.2
-"""
-objname = "4179"
-observat = "B31"
-t_obs = Time(ccd.header["DATE-OBS"]) + ccd.header["EXPTIME"] * u.s / 2
-obj = Horizons(id=objname, location=observat, epochs=t_obs.jd)
-q_obj = obj.ephemerides()
+    nccd = CCDData(data=cutout.data, header=ccd.header.copy(),
+                   wcs=cutout.wcs, unit=ccd.unit)
+    ny, nx = nccd.data.shape
+    nccd.header["NAXIS1"] = nx
+    nccd.header["NAXIS2"] = ny
+    nccd.header["LTV1"] = nccd.header.get("LTV1", 0) - cutout.origin_original[0]
+    nccd.header["LTV2"] = nccd.header.get("LTV2", 0) - cutout.origin_original[1]
 
+    return nccd
 
-pos_sky = SkyCoord(q_obj["RA"][0], q_obj["DEC"][0], unit='deg')
-pos_pix = pos_sky.to_pixel(wcs=ccd.wcs)
-pos_pix = np.array([pos_pix[0], pos_pix[1]]).T
+cutccd = cut_ccd(ccd,position=(2000,2000), size=(2000,2000))
 
-ap0 = CircularAperture(pos_pix, r=15)
-an0 = CircularAnnulus(pos_pix, r_in=25, r_out=40)
+### Query stars using DAO starfinder
+from photutils.detection import DAOStarFinder
+from photutils.aperture import CircularAperture
+
+avg, med, std = sigma_clipped_stats(cutccd.data)  # by default, 3-sigma 5-iteration.
+finder = DAOStarFinder(threshold=4*std, fwhm=6.7, roundlo=-.5, roundhi=.5, exclude_border=True) 
+sources = finder(cutccd.data - med) 
+
+for col in sources.colnames:  
+    sources[col].info.format = "%d" if col in ('id', 'npix') else '%.2f'
+sources.pprint(max_width=76)  # astropy Table
 
 fig, axs = plt.subplots(1, 1, figsize=(8, 5), sharex=False, sharey=False, gridspec_kw=None)
 
-vis.norm_imshow(axs, ccd, zscale=True)
-ap0.plot(color='r', lw=1, alpha=1, ax=axs)
-an0.plot(color='w', lw=1, alpha=1, ax=axs)
+vis.norm_imshow(axs, cutccd.data, zscale=True)
+pos = np.transpose((sources['xcentroid'], sources['ycentroid']))
+aps = CircularAperture(pos, r=20.)
+aps.plot(color='blue', lw=1, alpha=0.5)
+
 plt.tight_layout()
 plt.show();
-
-phot_targ = ypu.apphot_annulus(ccd, ap0, an0)
-m_targ = phot_targ['mag'][0]
-dm_targ = phot_targ['merr'][0]
-print(f"Instrumental magntiude = {m_targ:.3f} ± {dm_targ:.3f}")
-"""
 
 # 1.3 
 
