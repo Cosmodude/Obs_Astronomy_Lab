@@ -39,7 +39,7 @@ for idx, fit in enumerate(allfits):
     d, h = fits.getdata(fit, header = True)
     header_obj.append(h)
     data.append(d)
-#print(ccd_array)
+#print(ccd_array[0].wcs)
 
 align_and_stack(ccd_array)
 

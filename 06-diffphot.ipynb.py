@@ -43,6 +43,7 @@ from photutils.psf.groupstars import DAOGroup
 
 ### Set yours here
 DATAPATH = Path('./Data/Aligned_Cal')
+#DATAPATH = Path('./Data/Cal_Data')
 TMPDIR = Path('tmp')
 TMPDIR.mkdir(exist_ok=True)
 
@@ -52,8 +53,8 @@ allfits.sort()
 
 ###  Only one file, wrap into loop
 
-ccd = CCDData.read(allfits[0], unit= "adu")
-
+ccd = CCDData.read(allfits[0], unit = 'u')
+print(ccd.wcs)
 ###  Cut outer regions of the image, keep only center
 def cut_ccd(ccd, position, size, mode="trim", fill_value=np.nan, warnings=True):
     """ Converts the Cutout2D object to proper CCDData """
@@ -62,6 +63,7 @@ def cut_ccd(ccd, position, size, mode="trim", fill_value=np.nan, warnings=True):
         wcs=getattr(ccd, "wcs", WCS(ccd.header)),
         mode=mode, fill_value=fill_value, copy=True,
     )
+    print(cutout.wcs)
     # Copy True just to avoid any contamination to the original ccd.
 
     nccd = CCDData(data=cutout.data, header=ccd.header.copy(),
@@ -99,7 +101,7 @@ aps.plot(color='blue', lw=1, alpha=0.5)
 plt.tight_layout()
 plt.show();
 
-# Query stars using 
+# Find center of the image 
 
 print(cutccd.wcs)
 pix_scale = 0.4*u.arcsec
@@ -114,6 +116,79 @@ print("\nCoordinate of the center of the image:\n", center_coo)
 
 fov_radius = np.sqrt((np.array(cutccd.shape)**2).sum())/2 * pix_scale
 
+
+# Query stars from the PanStarrs catalog
+
+q_ps = Catalogs.query_region(center_coo, radius=fov_radius, catalog="Panstarrs", 
+                             data_release="dr2", table="mean")
+# Change some column names for convenience.
+q_ps["raMean"].name = "ra"
+q_ps["decMean"].name = "dec"
+q_ps["gMeanPSFMag"].name = "g"
+q_ps["rMeanPSFMag"].name = "r"
+print("Length of queried catalog", len(q_ps))
+
+
+# Dropping stars!!!
+q_ps = q_ps.to_pandas().dropna(subset=["g", "r"])
+
+# Calculate V and R magnitudes and B-V
+q_ps["V"] = 0.006 + 0.474*q_ps["g"] + 0.526*q_ps["r"]
+q_ps["R"] = -0.138 - 0.131*q_ps["g"] + 1.131*q_ps["r"]
+q_ps["B-V"] = 0.207 + 1.113*(q_ps["g"]-q_ps["r"])
+q_ps["dV"] = np.sqrt(
+    0.474**2*q_ps["gMeanPSFMagErr"]**2 
+    + 0.526**2*q_ps["rMeanPSFMagErr"]**2 + 0.012**2
+)
+q_ps["dR"] = np.sqrt(
+    0.131**2*q_ps["gMeanPSFMagErr"]**2
+    + 1.131**2*q_ps["rMeanPSFMagErr"]**2 + 0.015**2
+)
+
+q_ps["dgr"] = np.sqrt(q_ps["gMeanPSFMagErr"]**2 + q_ps["rMeanPSFMagErr"]**2)
+
+# Select only necessary columns
+q2 = q_ps[["ra", "dec", "g", "r", "dgr", "V", "R", "B-V", "dV", "dR"]].copy().reset_index(drop=True)
+
+# Select only brighter than 22 mag
+q2 = q2[(q2["V"] < 22) & (q2["R"] < 22)].copy().reset_index(drop=True)
+
+# Calculate x, y position
+coo = SkyCoord(q2["ra"], q2["dec"], unit='deg')
+q2["x"], q2["y"] = cutccd.wcs.wcs_world2pix(coo.ra, coo.dec, 0)
+
+# Remove stars outside the image
+q2 = q2[(q2["x"] > 20) & (q2["x"] < cutccd.shape[1]-20) 
+        & (q2["y"] > 20) & (q2["y"] < cutccd.shape[0]-20)]
+
+q2 = q2.reset_index(drop = True)
+
+# Grouping stars
+def group_stars(table, crit_separation, xcol='x', ycol='y', index_only=True):
+    if not isinstance(table, Table):
+        table = Table.from_pandas(table)
+    tab = table.copy()
+    
+    tab[xcol].name = "x_0"
+    tab[ycol].name = "y_0"
+    try:
+        gtab = DAOGroup(crit_separation=crit_separation)(tab)
+    except IndexError:
+        gtab = tab
+        gtab["group_id"] = []
+        gtab["id"] = []
+    if not index_only:
+        gtab["x_0"].name = xcol
+        gtab["y_0"].name = ycol
+        return gtab
+    else:
+        gid, gnum = np.unique(gtab["group_id"], return_counts = True)
+        gmask = gid[gnum != 1]
+        grouped_rows = []
+        for i, gid in enumerate(gtab["group_id"]):
+            if gid in gmask:
+                grouped_rows.append(i)
+        return grouped_rows
 """
 # 1.3 
 
