@@ -76,7 +76,7 @@ def cut_ccd(ccd, position, size, mode="trim", fill_value=np.nan, warnings=True):
 
 cutccd = cut_ccd(ccd,position=(2000,2000), size=(2000,2000))
 
-### Query stars using DAO starfinder using circular aperture
+### Find stars using DAO starfinder using circular aperture
 
 from photutils.detection import DAOStarFinder
 from photutils.aperture import CircularAperture
@@ -87,7 +87,7 @@ sources = finder(cutccd.data - med)
 
 for col in sources.colnames:  
     sources[col].info.format = "%d" if col in ('id', 'npix') else '%.2f'
-sources.pprint(max_width=76)  # astropy Table
+#sources.pprint(max_width=76)  # astropy Table
 
 fig, axs = plt.subplots(1, 1, figsize=(8, 5), sharex=False, sharey=False, gridspec_kw=None)
 
@@ -98,6 +98,21 @@ aps.plot(color='blue', lw=1, alpha=0.5)
 
 plt.tight_layout()
 plt.show();
+
+# Query stars using 
+
+print(cutccd.wcs)
+pix_scale = 0.4*u.arcsec
+
+center_xy = np.array(cutccd.shape)/2
+center_radec = cutccd.wcs.wcs_pix2world(*center_xy, 0)
+center_coo = SkyCoord(*center_radec, unit='deg')
+
+width, height = np.array(cutccd.shape)*pix_scale
+
+print("\nCoordinate of the center of the image:\n", center_coo)
+
+fov_radius = np.sqrt((np.array(cutccd.shape)**2).sum())/2 * pix_scale
 
 """
 # 1.3 
