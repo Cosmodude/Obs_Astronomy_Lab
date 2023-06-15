@@ -78,7 +78,7 @@ def cut_ccd(ccd, position, size, mode="trim", fill_value=np.nan, warnings=True):
 
 cutccd = cut_ccd(ccd,position=(2000,2000), size=(2000,2000))
 
-### Find stars using DAO starfinder using circular aperture
+### Find stars with DAOStarfinder using circular aperture
 
 from photutils.detection import DAOStarFinder
 from photutils.aperture import CircularAperture
@@ -279,6 +279,7 @@ dmcat.fillna(0, inplace=True)
 mobs.fillna(0, inplace=True)
 dmobs.fillna(0, inplace=True)
 
+# Standartization
 zeropt = np.average(mobs - mcat, weights=1/dmtot**2)
 mag = phot["mag"]-zeropt
 color = phot["B-V"]
