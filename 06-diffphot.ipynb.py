@@ -89,7 +89,7 @@ sources = finder(cutccd.data - med)
 
 for col in sources.colnames:  
     sources[col].info.format = "%d" if col in ('id', 'npix') else '%.2f'
-#sources.pprint(max_width=76)  # astropy Table
+sources.pprint(max_width=76)  # astropy Table
 
 fig, axs = plt.subplots(1, 1, figsize=(8, 5), sharex=False, sharey=False, gridspec_kw=None)
 
@@ -98,12 +98,13 @@ pos = np.transpose((sources['xcentroid'], sources['ycentroid']))
 aps = CircularAperture(pos, r=20.)
 aps.plot(color='blue', lw=1, alpha=0.5)
 
+plt.title("DAOStarFinder")
 plt.tight_layout()
 plt.show();
 
 # Find center of the image 
 
-print(cutccd.wcs)
+#print(cutccd.wcs)
 pix_scale = 0.4*u.arcsec
 
 center_xy = np.array(cutccd.shape)/2
