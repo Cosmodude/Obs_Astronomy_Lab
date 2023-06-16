@@ -15,14 +15,13 @@ def align_and_stack(array):
     stacked_image = array[0]
     for i in range(1, len(array)):
         print(i)
-        target = array[0]#.newbyteorder()
-        source = array[i]#.newbyteorder()
-        # here comes the error, only with calibrated data
+        target = array[0]
+        source = array[i]
         aligned_source, footprint = aa.register( source, target , propagate_mask=True,detection_sigma=3) 
         # stack images
         stacked_image += aligned_source
-    print(stacked_image)
 
+    print(stacked_image)
     # Saving file
     DATAPATH = Path('./Data/Aligned_Raw/')
     fits.writeto(DATAPATH / (f"M13-{filter}" + '_aligned.fit'), stacked_image, header_obj[0], overwrite = True)
