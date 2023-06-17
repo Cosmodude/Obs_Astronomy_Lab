@@ -14,14 +14,17 @@ To install dependencies
 Put your calibration and raw images in the Data/Raw_Data folder
 
 To allign and stack images run:
+    
     python helpful_scripts.py
 
 For calibration run: 
+    
     python 00-preprocessing.ipynb.py
 
 Get WCS atrribute for the images from https://nova.astrometry.net/upload. 
 Put resulting file in the Data/Aligned_Cal folder
 
 For Analysis run:
+    
     python 06-diffphot.ipynb.py 
 
