@@ -19,6 +19,9 @@ To allign and stack images run:
 For calibration run: 
     python 00-preprocessing.ipynb.py
 
+Get WCS atrribute for the images from https://nova.astrometry.net/upload. 
+Put resulting file in the Data/Aligned_Cal folder
+
 For Analysis run:
     python 06-diffphot.ipynb.py 
 
