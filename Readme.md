@@ -7,11 +7,18 @@
     Images can be viewed via ds9 app:
         https://sites.google.com/cfa.harvard.edu/saoimageds9/download
 
-## Preprocessing Done 
-    Later only 06-diffphot.ipynb.py file is necessary for analysis,
-    others are optional
+# Usage
+To install dependencies
+    pip install -r requirements.txt
 
-    Get stars using DAO finder and Query
-    Drop nearby ones first, then match 
-    get reference stars from these
-    then photometry for them
+Put your calibration and raw images in the Data/Raw_Data folder
+
+To allign and stack images run:
+    python helpful_scripts.py
+
+For calibration run: 
+    python 00-preprocessing.ipynb.py
+
+For Analysis run:
+    python 06-diffphot.ipynb.py 
+

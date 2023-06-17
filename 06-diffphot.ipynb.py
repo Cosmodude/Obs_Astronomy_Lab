@@ -271,6 +271,7 @@ plt.ylabel("instrumental V-mag")
 plt.show
 
 # Real magnitude +  B-V diagram
+
 mcat, dmcat = phot["V"], phot["dV"]
 mobs, dmobs = phot["mag"], phot["merr"]
 color = phot["g"] - phot["r"]
@@ -280,7 +281,7 @@ dmcat.fillna(0, inplace=True)
 mobs.fillna(0, inplace=True)
 dmobs.fillna(0, inplace=True)
 
-# Standartization
+## Standartization
 zeropt = np.average(mobs - mcat, weights=1/dmtot**2)
 mag = phot["mag"]-zeropt
 color = phot["B-V"]
